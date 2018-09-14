@@ -1,5 +1,5 @@
-const userValidator = {
-    userSignUp: (req, res, next) => {
+class userValidator{
+  static userSignUp(req, res, next){
       if (req.body.name.trim() === '' || req.body.email.trim() === '' || req.body.password.trim() === '') {
       return res.status(400).json({
         message: 'Please fill in all fields',
@@ -24,9 +24,9 @@ const userValidator = {
       }
     }
       return next();
-    },
+    }
       
-    userLogin: (req, res, next) => {
+    static userLogin(req, res, next){
       if (req.body.email.trim() === '' || req.body.password.trim() === '') {
         return res.status(400).json({
           message: 'Please fill in all fields',
@@ -47,6 +47,6 @@ const userValidator = {
       return next();
     }
   };
-  
+
   export default userValidator;
   

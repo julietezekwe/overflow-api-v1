@@ -1,8 +1,8 @@
 import questionModel from '../dummyModel/QuestionModel';
 import userModel from '../dummyModel/UserModel';
 
-const Questions = {
-    getAllQuestions : (req, res) => {
+class Questions {
+    static getAllQuestions(req, res){
         if(questionModel.length > 0){
             return res.status(201).json({
                 questionModel,
@@ -15,8 +15,8 @@ const Questions = {
         
               });
         } 
-    },
-    getQuestion : (req, res) => {
+    }
+    static getQuestion(req, res){
        const { questionId } = req.params;
      
         let found = false;
@@ -41,9 +41,9 @@ const Questions = {
             
                   });
             }    
-    }, 
+    }
 
-    getUserQuestion : (req, res) => {
+    static getUserQuestion(req, res){
         const { userId } = req.params;
         let found = false;
         let questions=[];
@@ -70,13 +70,26 @@ const Questions = {
             
                   });
             }    
-    },
-    
-    createQuestion : (req, res) => {
-      res.json('create question')
     }
-
-
+    
+    static createQuestion(req, res) {
+        const {id, email } = req.authData;
+        const { title, body } = req.body;
+      
+            // push to the model
+            questionModel.push({
+                id: questionModel.length + 1,
+                title,
+                body,
+                userId :id,
+                created_at: new Date()
+            });
+            
+            return res.status(201).json({
+                message: 'succefully created a question',
+               error: false
+              });      
+    }
 }
 
 export default Questions;

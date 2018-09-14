@@ -5,7 +5,7 @@ const questions = [
         title: "title 1",
         body : "question body 1",
         userId: 1,
-        joined: new Date(),
+        created_at: new Date(),
     },
     {
         id: 2,
@@ -19,14 +19,14 @@ const questions = [
         title: "title 1",
         body : "question body 2",
         userId: 1,
-        joined: new Date(),
+        created_at: new Date(),
     },
     {
         id: 1,
         title: "title 1",
         body : "question body 3",
         userId: 1,
-        joined: new Date(),
+        created_at: new Date(),
     },
 ]
 

@@ -1,5 +1,5 @@
-const questionValidator = {
-    createQuestionValidator: (req, res, next) => {
+class questionValidator{
+    static createQuestionValidator(req, res, next){
       req.check('title', 'Question Title is required').notEmpty();
       req.check('body', 'Question Body is required').notEmpty();
   

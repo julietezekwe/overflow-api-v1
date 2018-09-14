@@ -4,15 +4,15 @@ import userModel from '../dummyModel/UserModel';
 
 const secret = "u1lJdh";
 const lastIndexOf = array => array[array.length - 1];
-const Users = {
-    getAllUsers: (req, res) => {
+class Users {
+    static getAllUsers(req, res){
         return res.status(201).json({
             userModel,
             message: 'success',
             
           });  
-    },
-    getUser: (req, res) => { 
+    }
+    static getUser(req, res){ 
         const { userId } = req.params;
         let found = false;
         let userDetail;
@@ -36,10 +36,9 @@ const Users = {
             
                   });
             }
-
      
-    },
-    registerUsers: (req, res) => {
+    }
+    static registerUsers(req, res){
         const {name, email, password } = req.body;
         let found = false;
          userModel.map(user => {
@@ -75,8 +74,8 @@ const Users = {
                 token
               });
             }   
-    },
-    loginUser: (req, res) => {
+    }
+    static loginUser(req, res){
         const {name, email, password } = req.body;
            let found = false;
            let userDetail;
@@ -91,7 +90,7 @@ const Users = {
             if(found){
                 if(bcrypt.compareSync(password, userDetail.password)){
                     // Assign token to user for 30sec
-                    const token = jwt.sign(userDetail, secret, { expiresIn: '300s' });
+                    const token = jwt.sign(userDetail, secret, { expiresIn: '1hr' });
                     // Success message
                     
                     return res.status(201).json({

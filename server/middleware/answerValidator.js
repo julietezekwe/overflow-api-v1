@@ -1,5 +1,5 @@
-const answerValidator = {
-    createAnswerValidator: (req, res, next) => {
+class answerValidator {
+    static createAnswerValidator(req, res, next){
       req.check('body', 'Question Body is required').notEmpty();
       const errors = req.validationErrors();
       const validationErrors = [];

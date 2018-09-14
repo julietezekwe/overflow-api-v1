@@ -1,5 +1,5 @@
-const paramsChecker = {
-    idChecker: (req, res, next) => {
+class paramsChecker{
+   static idChecker(req, res, next){
       const { userId, questionId, answerId } = req.params;
       const validId = /^[0-9]+$/;
       // check if id is valid
