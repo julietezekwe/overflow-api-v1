@@ -1,0 +1,43 @@
+{
+  "name": "overflow-api-v1",
+  "version": "1.0.0",
+  "description": "Stack overflow lite application",
+  "main": "app.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec",
+    "babel-node": "babel-node app --presets=env",
+    "start": "babel-node app",
+    "start:dev": "nodemon --exec babel-node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julietezekwe/overflow-api-v1.git"
+  },
+  "author": "Juliet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julietezekwe/overflow-api-v1/issues"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^9.0.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "chai": "^4.1.2",
+    "eslint": "^5.5.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-react": "^7.11.1",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.4",
+    "request": "^2.88.0"
+  },
+  "homepage": "https://github.com/julietezekwe/overflow-api-v1#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "express-validator": "^5.3.0",
+    "jsonwebtoken": "^8.3.0"
+  }
+}
