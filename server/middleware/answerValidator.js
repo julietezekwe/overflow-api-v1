@@ -1,6 +1,12 @@
 class answerValidator {
     static createAnswerValidator(req, res, next){
-      req.check('body', 'Question Body is required').notEmpty();
+      if (req.body.body.trim() === '') {
+        return res.status(400).json({
+          message: 'Please fill in all fields',
+          error: true
+        });
+      } else {
+      req.check('body', 'response Body is required').notEmpty();
       const errors = req.validationErrors();
       const validationErrors = [];
       if (errors) {
@@ -11,6 +17,7 @@ class answerValidator {
       }
       return next();
     }
+  }
   };
   
   export default answerValidator;

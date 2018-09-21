@@ -1,9 +1,10 @@
 const users =[
+    {},
     {
-        id: 1,
+        id: 4,
         name: "Juliet Ezekwe",
         email: "juliet@gmail.com",
-        password: "juliet",
+        password: "$2b$10$eFQv6bAPOtkNtEG/8InPRu5kr1kz0eHjHUEbhJWU1sRwIrRkPqJEi",
         joined: new Date(),
     },
     {

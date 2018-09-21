@@ -58,6 +58,7 @@ class Questions {
             if(found){
                 return res.status(201).json({
                     questions,
+                    user:req.authData,
                     message: 'Success',
                     
                   }); 
@@ -90,6 +91,44 @@ class Questions {
                error: false
               });      
     }
+    static deleteQuestion(req, res){
+        const { questionId } = req.params;
+        const { id } = req.authData;
+         let found = false;
+         let questionDetail;
+            questionModel.map((question, index) => {  
+             // found a question
+              if(question.id === Number(questionId)){                  
+                 
+                found = true;
+                if(question.userId === id){
+                    questionModel.splice(index, 1);
+                    return res.status(201).json({
+                       questionModel,
+                       user: req.authData,
+                        message: 'Deleted successfully'
+                        
+                      });   
+                }
+                else{
+                    return res.status(401).json({
+                       error: true,
+                         message: 'You cant delete another users question'
+                         
+                       });   
+                }
+                     
+               }
+             });
+             // wrong id
+             if(!found){
+                 return res.status(400).json({
+                     message: 'no question found',
+                     error: true,
+             
+                   });
+             }    
+     }
 }
 
 export default Questions;

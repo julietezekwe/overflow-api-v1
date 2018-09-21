@@ -20,18 +20,23 @@ class Users {
             // found a user
              if(user.id === Number(userId)){                  
                 found = true;
-                userDetail = user; 
+                userDetail = {
+                    id: user.id,
+                    name: user.name,
+                    email : user.email,
+                    joined: user.joined
+                }; 
                 return res.status(201).json({
                     userDetail,
-                    message: 'Signed up successfully',
+                    message: 'success',
                     
                   });        
               }
             });
             // wrong id
             if(!found){
-                return res.status(400).json({
-                    message: 'there is no user with this id',
+                return res.status(404).json({
+                    message: 'No user found',
                     error: true,
             
                   });
@@ -45,13 +50,13 @@ class Users {
     //    check if email is taken
             if(user.email === email){
                 found = true;
-                    return res.status(401).json({
+                    return res.status(400).json({
                     message: "email already exist",
                     error: true
                 });
             } 
         
-          });    
+          })   
        
           if(!found){
             // push to the model
