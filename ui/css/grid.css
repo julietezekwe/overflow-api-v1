@@ -1,0 +1,147 @@
+body{
+    font-family: Arial;
+margin: 0;
+    background: #f1f1f1;
+}
+.container{
+  padding: 20px;
+  margin-left:auto;
+  margin-right:auto;
+ 
+}
+.row{
+  display:flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  /* align-items: baseline; */
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+.col-1 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+   
+}
+.col-2 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 2;
+}
+.col-3 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 3;
+}
+.col-4 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 4;
+}
+.col-5 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 5;
+}
+.col-6 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 6;
+}
+.col-7 {
+    width: 100px;
+
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    flex-grow: 7
+}
+.col-8 {
+    width: 100px;
+
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    flex-grow: 8
+
+}
+.col-9 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 9;
+}
+.col-10 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 10;
+}
+.col-11 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 11;
+}
+.col-12 {
+    width: 100px;
+    text-align: center;
+   
+    line-height: 40px;
+    font-size: 16px;
+   
+    flex-grow: 12;
+}
+
+
+@media only screen and (max-width: 750px) {
+    /* For Tablets: */
+    [class*="col-"] {
+        width: 33%;
+    }
+}
+@media only screen and (max-width: 500px) {
+    /* For medium phones: */
+    [class*="col-"] {
+        width: 50%;
+    }
+}
+@media only screen and (max-width: 350px) {
+    /* For mobile phones: */
+    [class*="col-"] {
+        width: 100%;
+    }
+}
