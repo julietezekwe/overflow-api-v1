@@ -4,10 +4,12 @@
   "description": "Stack overflow lite application",
   "main": "app.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --exit --timeout 25000 ./server/test/**/*.js --compilers js:babel-core/register",
+    "test": " nyc mocha --exit --timeout 25000 ./server/test/**/*.js --compilers js:babel-core/register",
     "babel-node": "babel-node app --presets=env",
     "start": "babel-node app",
-    "start:dev": "nodemon --exec babel-node app.js"
+    "start:dev": "nodemon --exec babel-node app.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coveralls": "nyc npm test&& nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -33,6 +35,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.4",
+    "nyc": "^13.0.1",
     "request": "^2.88.0"
   },
   "homepage": "https://github.com/julietezekwe/overflow-api-v1#readme",
