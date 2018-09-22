@@ -4,9 +4,10 @@
   "description": "Stack overflow lite application",
   "main": "app.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --exit --timeout 25000 ./server/test/**/*.js --compilers js:babel-core/register",
+    "build": "babel app.js -d dist && babel server -d dist/server ",
+    "test": "mocha --exit --timeout 10000 ./server/test/**/*.js --compilers js:babel-core/register",
     "babel-node": "babel-node app --presets=env",
-    "start": "babel-node app",
+    "start": "npm run build && node dist/app.js",
     "start:dev": "nodemon --exec babel-node app.js"
   },
   "repository": {
