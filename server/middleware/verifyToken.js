@@ -11,18 +11,19 @@ class verifyToken{
             if (!bearerHeader) {
               // Forbidden
               return res.status(403).json({
-                message: 'Kindly sign in bearer error',
+                message: 'Kindly sign in',
                 error: true
               });
             }
-            req.token = bearerHeader;
-            
-            jwt.verify(req.token, secret, (err, authData) => {
+            // req.token = bearerHeader;
+           
+            jwt.verify(bearerHeader, secret, (err, authData) => {
               
                if (err) {
                 // Wrong token
+                
                 return res.status(403).json({
-                  message: 'Kindly sign in',
+                  message: 'Kindly sign in, wrong authentication',
                   error: true
                 });
               }
