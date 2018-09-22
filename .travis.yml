@@ -6,11 +6,9 @@ cache:
   - node_modules
 script:
   - npm test
-  
+
 deploy:
 
-  skip_cleanup: true
-  github_token: $github_token
-  
+
   on:
     branch: develop
