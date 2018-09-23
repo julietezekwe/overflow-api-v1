@@ -2,6 +2,7 @@
   "name": "overflow-api-v1",
   "version": "1.0.0",
   "description": "Stack overflow lite application",
+  "engines": {"node" : "8.0"},
   "main": "app.js",
   "scripts": {
     "build": "babel app.js -d dist && babel server -d dist/server ",
