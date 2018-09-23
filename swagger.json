@@ -1,0 +1,458 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0.0",
+		"title": "StackOverflow Lite",
+		"description": "Stackoverflow Lite is a webapp where develpers and people in tech ask and find solutions to tech related problems ",
+		"contact": {
+			"email": "julietezekwe@gmail.com"
+		},
+		"license": {
+			"name": "ISC",
+			"url": "https://opensource.org/licenses/ISC"
+		}
+	},
+	"host": "",
+	"basePath": "/api/v1/",
+	"tags": [
+		{
+			"name": "Users",
+			"description": "API for users in the system"
+		},
+		{
+			"name": "Questions",
+			"description": "API for question on the platform"
+		},
+		{
+			"name": "Answers",
+			"description": "API for answers on the platform"
+		}
+	],
+	"schemes": [
+		"https",
+		"http"
+	],
+	"consumes": [
+		"application/json"
+	],
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+		"/auth/signup": {
+			"post": {
+				"summary": "User signup",
+				"tags": [
+					"Users"
+				],
+				"description": "Register a user in the platform",
+				"parameters": [
+					{
+						"name": "user",
+						"in": "body",
+						"description": "A new user that we want to register",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/UserSignUp"
+						}
+					}
+				],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"201": {
+						"description": "Signed up successfully"
+					}
+				}
+			}
+		},
+		"auth/users" : {
+            "get": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Get all Users",
+				"responses": {
+					"201": {
+						"description": "success",
+						"schema": {
+							"$ref": "#/definitions/FoundUsers"
+						}
+					}
+				}
+			}
+		},
+		"auth/{userId}" : {
+			"get": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Get a user with given ID",
+				"parameters": [
+					{
+						"name": "userId",
+						"in": "path",
+						"description": "The id of the user to be found",
+						"required": "true",
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "success",
+						"schema": {
+							"$ref": "#/definitions/FoundUsers"
+						}
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"summary": "User login",
+				"tags": [
+					"Users"
+				],
+				"description": "Login a user",
+				"parameters": [
+					{
+						"name": "user",
+						"in": "body",
+						"description": "A user that wants to login",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/UserLogin"
+						}
+					}
+				],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"201": {
+						"description": "logged in successfully"
+					}
+				}
+			}
+		},
+		"/question": {
+			"post": {
+				"summary": "Ask a question",
+				"tags": [
+					"Questions"
+				],
+				"description": "Ask a question",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "Authorization",
+						"description": "Enter token",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "question",
+						"in": "body",
+						"description": "A new question that the user want to ask",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/QuestionCreate"
+						}
+					}
+				],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"201": {
+						"description": "succefully created a question"
+					}
+				}
+			}
+		},
+		"/questions" : {
+            "get": {
+				"tags": [
+					"Questions"
+				],
+				"summary": "Get all Questions",
+				"responses": {
+					"201": {
+						"description": "success",
+						"schema": {
+							"$ref": "#/definitions/FoundQuestions"
+						}
+					}
+				}
+			}
+		},
+		"/question/{questionId}": {
+			"delete": {
+				"summary": "Remove a question",
+				"tags": [
+					"Questions"
+				],
+				"description": "This can only be done by the logged in user.",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "Authorization",
+						"description": "Enter token",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "questionId",
+						"in": "path",
+						"description": "The id of the question to be deleted",
+						"required": "true",
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "Question successfully deleted"
+					}
+				}
+			},
+			"get": {
+				"tags": [
+					"Questions"
+				],
+				"summary": "Get a question with given ID",
+				"parameters": [
+					{
+						"name": "questionId",
+						"in": "path",
+						"description": "The id of the question to be found",
+						"required": "true",
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "success",
+						"schema": {
+							"$ref": "#/definitions/FoundQuestions"
+						}
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					}
+				}
+			}
+		},
+
+		"/question/{userId}/questions" : {
+            "get": {
+				"tags": [
+					"Questions"
+				],
+				"summary": "Get questions that belongs to a given user ID",
+				"parameters": [
+					{
+						"name": "userId",
+						"in": "path",
+						"description": "The id of the user whose questions are to be found",
+						"required": "true",
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "success",
+						"schema": {
+							"$ref": "#/definitions/FoundQuestions"
+						}
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					}
+				}
+			}
+		},
+
+		"/question/{questionId}/answer": {
+			"post": {
+				"summary": "Add an answer for a question",
+				"tags": [
+					"Answers"
+				],
+				"description": "Respond to a question",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "Authorization",
+						"description": "Enter token",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "questionId",
+						"in": "path",
+						"description": "The id of the question the answer is for",
+						"required": "true",
+						"type": "integer",
+						"format": "int64"
+					},
+					{
+						"name": "answer",
+						"in": "body",
+						"description": "Add a new answer to a question",
+						"schema": {
+							"$ref": "#/definitions/AnswersCreate"
+						}
+					}
+				],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"201": {
+						"description": "Answer sucessfully created"
+					}
+				}
+			}
+			
+		},
+		"/question/{questionId}/answers": {
+			"get": {
+				"tags": [
+					"Answers"
+				],
+				"summary": "Get all answers to a question",
+				"parameters": [
+					{
+						"name": "questionId",
+						"in": "path",
+						"description": "The id of the question to get all answers",
+						"required": "true",
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Questions Answers is found",
+						"schema": {
+							"$ref": "#/definitions/FoundAnswers"
+						}
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					}
+				}
+			}
+		}
+		
+	},
+
+	"definitions": {
+		"UserSignUp": {
+			"type": "object",
+			"required": [
+				"name",
+				"email",
+				"password"
+			],
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string",
+					"uniqueItems": true
+				},
+				"password": {
+					"type": "string",
+					"uniqueItems": true
+				}
+			}
+		},
+		"UserLogin": {
+			"type": "object",
+			"required": [
+				"email",
+				"password"
+			],
+			"properties": {
+				"email": {
+					"type": "string",
+					"uniqueItems": true
+				},
+				"password": {
+					"type": "string",
+					"uniqueItems": true
+				}
+			}
+		},
+		"QuestionCreate": {
+			"type": "object",
+			"required": [
+				"title",
+				"body"
+				
+			],
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"body": {
+					"type": "string"
+				}
+			}
+		},
+		"FoundUsers": {
+			"type": "object",
+			"required": [
+				"users"
+			],
+			"properties": {
+				"users": {
+					"type": "object"
+				}
+			}
+		},
+		"FoundQuestions": {
+			"type": "object",
+			"required": [
+				"questions"
+			],
+			"properties": {
+				"questions": {
+					"type": "object"
+				}
+			}
+		},
+		"FoundAnswers": {
+			"type": "object",
+			"required": [
+				"answers"
+			],
+			"properties": {
+				"answers": {
+					"type": "object"
+				}
+			}
+		},
+		"AnswersCreate": {
+			"type": "object",
+			"required": [
+				"body"
+			],
+			"properties": {
+				"body": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
