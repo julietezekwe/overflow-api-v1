@@ -67,7 +67,7 @@
 				}
 			}
 		},
-		"auth/users" : {
+		"/auth/users" : {
             "get": {
 				"tags": [
 					"Users"
@@ -83,7 +83,7 @@
 				}
 			}
 		},
-		"auth/{userId}" : {
+		"/auth/{userId}" : {
 			"get": {
 				"tags": [
 					"Users"
