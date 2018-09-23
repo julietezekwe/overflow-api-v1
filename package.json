@@ -2,7 +2,9 @@
   "name": "overflow-api-v1",
   "version": "1.0.0",
   "description": "Stack overflow lite application",
-  "engines": {"node" : "8.0"},
+  "engines": {
+    "node": "8.0"
+  },
   "main": "app.js",
   "scripts": {
     "build": "babel app.js -d dist && babel server -d dist/server ",
@@ -43,6 +45,7 @@
   "homepage": "https://github.com/julietezekwe/overflow-api-v1#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "babel": "^6.23.0",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
