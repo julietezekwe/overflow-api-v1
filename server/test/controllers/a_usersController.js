@@ -31,7 +31,7 @@ describe('User', () => {
     const userDetails = {
       name: 'Oge Ibezim',
       password: 'Ibezim',
-      email: 'oge@gmail.com',
+      email: 'ogechi@gmail.com',
     
      
     };
@@ -41,7 +41,6 @@ describe('User', () => {
     .end((err, res) => {
       expect(res.body.message).to.eql('Signed up successfully');
       expect(res.body).to.have.property('token');
-      expect(res.body).to.have.property('userDetail');
       expect(res.status).to.equal(201);
       authToken = res.body.token;
       done();
@@ -78,7 +77,6 @@ describe('User', () => {
         expect(res.body).to.be.a('object');
         expect(res.body.message).eql('logged in successfully');
         expect(res.body).to.have.property('token');
-        expect(res.body).to.have.property('userDetail');
         expect(res.status).to.equal(201);
         authToken = res.body.token;
         done();
@@ -88,7 +86,7 @@ describe('User', () => {
   it('should not get a user that does not exist', (done) => {
    
     chai.request(app)
-      .get('/api/v1/auth/10')
+      .get('/api/v1/auth/100')
       .end((err, res) => {
         expect(res.body.message).to.eql('No user found');
         expect(res.status).to.equal(404);
@@ -99,7 +97,7 @@ describe('User', () => {
   it('should get a user that exist', (done) => {
    
     chai.request(app)
-      .get('/api/v1/auth/2')
+      .get('/api/v1/auth/1')
       .end((err, res) => {
         expect(res.body.message).to.eql('success');
         expect(res.status).to.equal(201);

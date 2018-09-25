@@ -18,7 +18,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var secret = "u1lJdh";
+var secret = process.env.secret;
 var User = _UserModel2.default.User;
 
 var verifyToken = function () {

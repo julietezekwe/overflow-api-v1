@@ -7,10 +7,13 @@
   },
   "main": "app.js",
   "scripts": {
-    "build": "babel app.js -d dist && babel swagger.json -d dist && babel server -d dist/server ",
-    "test": " nyc mocha --exit --timeout 25000 ./server/test/**/*.js --compilers js:babel-core/register",
+    "build": "babel app.js -d dist && babel server -d dist/server ",
+    "test": "npm run migration && nyc mocha --exit ./server/test/**/*.js --compilers js:babel-core/register",
     "babel-node": "babel-node app --presets=env",
     "start": "node dist/app.js",
+    "unmigrate" : "babel-node server/db/unmigrate",
+    "migration": " npm run unmigrate && babel-node server/db/migration && npm run seed",
+    "seed": "babel-node server/db/seed",
     "start:dev": "nodemon --exec babel-node app.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coveralls": "nyc npm test&& nyc report --reporter=text-lcov | coveralls"
@@ -51,6 +54,7 @@
     "express": "^4.16.3",
     "express-validator": "^5.3.0",
     "jsonwebtoken": "^8.3.0",
+    "pg": "^7.4.3",
     "swagger-ui-express": "^4.0.1"
   }
 }

@@ -109,7 +109,7 @@ describe('Questions', () => {
     it('it should not get a user Question if user is not signed in', (done) => {
      
       chai.request(app)
-        .get('/api/v1/question/4/questions')
+        .get('/api/v1/question/1/questions')
         .set('Authorization', wrongToken)
         .end((err, res) => {
           expect(res.body.message).to.eql('Kindly sign in, wrong authentication');
@@ -122,7 +122,7 @@ describe('Questions', () => {
     it('it should not get user\'s question for user without token', (done) => {
   
         chai.request(app)
-          .get('/api/v1/question/4/questions')
+          .get('/api/v1/question/1/questions')
           .end((err, res) => {
             expect(res.body.message).to.eql('Kindly sign in');
             expect(res.body.error).to.eql(true);
@@ -157,7 +157,7 @@ describe('Questions', () => {
       it('it should not get questions that does not exist ', (done) => {
   
         chai.request(app)
-          .get('/api/v1/question/9')
+          .get('/api/v1/question/100')
           .end((err, res) => {
             expect(res.body.message).to.eql('no questions found');
             expect(res.body.error).to.eql(true);
@@ -178,7 +178,7 @@ describe('Questions', () => {
       it('it should not get questions when the user does not have questions ', (done) => {
   
         chai.request(app)
-          .get('/api/v1/question/9/questions')
+          .get('/api/v1/question/3/questions')
           .set('Authorization', authToken)
           .end((err, res) => {
             expect(res.body.message).to.eql('no questions found');
@@ -192,7 +192,7 @@ describe('Questions', () => {
   
        
         chai.request(app)
-          .get('/api/v1/question/4/questions')
+          .get('/api/v1/question/1/questions')
           .set('Authorization', authToken)
           .end((err, res) => {
             expect(res.body.message).to.eql('Success');
@@ -252,14 +252,14 @@ describe('/DELETE REQUESTS', () => {
           });
       });
     
-      it('User can only delete its question', (done) => {
+      it('User can only delete its owned question', (done) => {
  
     
         chai.request(app)
           .delete('/api/v1/question/2')
           .set('Authorization', authToken)
           .end((err, res) => {
-            expect(res.body.message).to.eql('You cant delete another users question');
+            expect(res.body.message).to.eql('You have no question with this ID.');
             expect(res.body.error).to.eql(true);
             expect(res.status).to.equal(401);
             done();
@@ -269,7 +269,7 @@ describe('/DELETE REQUESTS', () => {
       it('should delete question for user with valid token', (done) => {
       
         chai.request(app)
-          .delete('/api/v1/question/3')
+          .delete('/api/v1/question/1')
           .set('Authorization', authToken)        
           .end((err, res) => {
             expect(res.body.message).to.eql('Deleted successfully');

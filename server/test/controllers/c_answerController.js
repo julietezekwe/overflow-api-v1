@@ -51,7 +51,7 @@ describe('Answers', () => {
         body: "body"
     };
     chai.request(app)
-     .post('/api/v1/question/1/answer')
+     .post('/api/v1/question/2/answer')
       .send(answer)
       .end((err, res) => {
         expect(res.body.message).to.eql('Kindly sign in');
@@ -67,7 +67,7 @@ describe('Answers', () => {
         body: "body"
     };
     chai.request(app)
-      .post('/api/v1/question/1/answer')
+      .post('/api/v1/question/2/answer')
       .set('Authorization', wrongToken)
       .send(answer)
       .end((err, res) => {
@@ -78,14 +78,14 @@ describe('Answers', () => {
       });
   });
 
-  it('should post answer for user with valid token and question exist', (done) => {
+  it('should post answer for user with valid token and question does not belong to user', (done) => {
   
     const question = {
         title: "title",
         body: "body"
     };
     chai.request(app)
-      .post('/api/v1/question/1/answer')
+      .post('/api/v1/question/2/answer')
       .set('Authorization', authToken)
       .send(question)
       .end((err, res) => {
@@ -95,15 +95,32 @@ describe('Answers', () => {
         done();
       });
     });
+    it('should not post answer for user that owns the question', (done) => {
   
-  it('should post not answer for a question that does not exist', (done) => {
+      const question = {
+          title: "title",
+          body: "body"
+      };
+      chai.request(app)
+        .post('/api/v1/question/3/answer')
+        .set('Authorization', authToken)
+        .send(question)
+        .end((err, res) => {
+          expect(res.body.message).to.eql('You cannot comment on your question');
+          expect(res.body.error).to.eql(true);
+          expect(res.status).to.equal(401);
+          done();
+        });
+      });
+  
+  it('should not post answer for a question that does not exist', (done) => {
   
     const question = {
         title: "title",
         body: "body"
     };
     chai.request(app)
-      .post('/api/v1/question/9/answer')
+      .post('/api/v1/question/100/answer')
       .set('Authorization', authToken)
       .send(question)
       .end((err, res) => {
@@ -137,7 +154,7 @@ describe('Answers', () => {
       it('it should not get answers that does not exist ', (done) => {
   
         chai.request(app)
-          .get('/api/v1/question/9/answers')
+          .get('/api/v1/question/100/answers')
           .end((err, res) => {
             expect(res.body.message).to.eql('no answers found');
             expect(res.body.error).to.eql(true);
@@ -145,10 +162,10 @@ describe('Answers', () => {
             done();
           });
       });
-      it('it should question\' answers ', (done) => {
+      it('it should get question\' answers ', (done) => {
   
         chai.request(app)
-          .get('/api/v1/question/1/answers')
+          .get('/api/v1/question/2/answers')
           .end((err, res) => {
             expect(res.body.message).to.eql('Success');
             expect(res.status).to.equal(201);

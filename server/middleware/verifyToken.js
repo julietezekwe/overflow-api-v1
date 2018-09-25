@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import models from '../dummyModel/UserModel';
 
-const secret = "u1lJdh";
+const secret = "gy8fy nz0093887e";
 const { User } = models;
 class verifyToken{
     static authenticate(req, res, next){
