@@ -81,7 +81,7 @@ describe('Answers', () => {
   it('should post answer for user with valid token and question does not belong to user', (done) => {
   
     const question = {
-        title: "title",
+      
         body: "body"
     };
     chai.request(app)
@@ -98,7 +98,7 @@ describe('Answers', () => {
     it('should not post answer for user that owns the question', (done) => {
   
       const question = {
-          title: "title",
+        
           body: "body"
       };
       chai.request(app)
@@ -112,11 +112,69 @@ describe('Answers', () => {
           done();
         });
       });
+
+      
+    it('should not update answer that does not exist', (done) => {
+  
+      const question = {
+      
+          body: "body edit"
+      };
+      chai.request(app)
+        .put('/api/v1/question/4/answers/100')
+        .set('Authorization', authToken)
+        .send(question)
+        .end((err, res) => {
+          expect(res.body.message).to.eql('You have no answer with this ID.');
+          expect(res.body.error).to.eql(true);
+          expect(res.status).to.equal(401);
+          done();
+        });
+      });
+
+      
+  it('should update answer for user that owns the answer', (done) => {
+  
+    const question = {
+      
+        body: "body edit"
+    };
+    chai.request(app)
+      .put('/api/v1/question/2/answers/1')
+      .set('Authorization', authToken)
+      .send(question)
+      .end((err, res) => {
+        expect(res.body.message).to.eql('succefully updated an answer');
+        expect(res.body.error).to.eql(false);
+        expect(res.status).to.equal(201);
+        done();
+      });
+    });
+
+    
+      
+  it('should accept the answer for the question owner', (done) => {
+  
+    const question = {
+      
+        body: "accept"
+    };
+    chai.request(app)
+      .put('/api/v1/question/1/answers/2')
+      .set('Authorization', authToken)
+      .send(question)
+      .end((err, res) => {
+        expect(res.body.message).to.eql('You have accepted this answer');
+        expect(res.body.error).to.eql(false);
+        expect(res.status).to.equal(201);
+        done();
+      });
+    });
   
   it('should not post answer for a question that does not exist', (done) => {
   
     const question = {
-        title: "title",
+
         body: "body"
     };
     chai.request(app)

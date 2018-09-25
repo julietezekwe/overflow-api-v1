@@ -74,7 +74,7 @@ class Answers {
             pool.query(query).then(response => {
                 if(response.rowCount > 0){
                     return res.status(201).json({
-                        message: 'succefully updated a answer',
+                        message: 'succefully updated an answer',
                        error: false
                       });    
                 }

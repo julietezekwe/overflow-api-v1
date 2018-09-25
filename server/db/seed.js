@@ -39,6 +39,7 @@ migrateUser("chinedu", "chinedu@gmail.com", "chinedu");
 migrateQuestions("title1", "question 1", 1);
 migrateQuestions("title2", "question 2", 2);
 migrateQuestions("title3", "question 3", 1);
+migrateQuestions("title4", "question 4", 2);
 
 migrateAnswers("answer to question 2", 2, 1, "juliet")
 migrateAnswers("answer to question 1", 1, 2, "chidimma")
