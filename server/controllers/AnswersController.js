@@ -32,55 +32,27 @@ class Answers {
         const {questionId, answerId } = req.params;
         const {id, email } = req.authData;
         const { body } = req.body;
-        let query = {
-            text: "SELECT * FROM Questions WHERE id = $1",
-            values: [questionId]
+        let query = {text: "SELECT * FROM Questions WHERE id = $1", values: [questionId]
         }
         pool.query(query).then(question => {
-           if(question.rowCount > 0 && question.rows[0].user_id === id){
-              
-               console.log("I own the question")
-               query = {
-                text : "UPDATE Answers SET accepted = $1 WHERE id = $2",
-                values: [ 1, answerId]
-              }
+           if(question.rowCount > 0 && question.rows[0].user_id === id){              
+               query = { text : "UPDATE Answers SET accepted = $1 WHERE id = $2", values: [ 1, answerId]}
               pool.query(query).then(response => {
                 if(response.rowCount > 0){
-                    return res.status(201).json({
-                        message: 'You have accepted this answer',
-                       error: false
-                      });    
+                    return res.status(201).json({ message: 'You have accepted this answer', error: false });    
                 }
               })
            }else{
-            query = {
-                text : "UPDATE Answers SET answer = $1 WHERE id = $2 AND user_id = $3",
-                values: [body, answerId, id]
-            }
+            query = {text : "UPDATE Answers SET answer = $1 WHERE id = $2 AND user_id = $3", alues: [body, answerId, id]}
             pool.query(query).then(response => {
                 if(response.rowCount > 0){
-                    return res.status(201).json({
-                        message: 'succefully updated an answer',
-                       error: false
-                      });    
+                    return res.status(201).json({ message: 'succefully updated an answer', error: false });    
                 }
                 else{
-                    return res.status(401).json({
-                        error: true,
-                        message: 'You have no answer with this ID.'
-                        
-                    }); 
-                }
-            }).catch(console.log);
-                
-                 
+                    return res.status(401).json({ error: true, message: 'You have no answer with this ID.'}); 
+                }})               
            }
         });
-        
-        
-        
-        
-       
     }
 
     static getAnswer(req, res){
