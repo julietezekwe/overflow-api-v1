@@ -3,11 +3,10 @@ import userModel from '../dummyModel/UserModel';
 import pool from "../db/dbConfig";
 
 
-class Questions {
-    static getAllQuestions(req, res){
-
+class Questions {   
+     static getAllQuestions(req, res){
         const query = {
-            text: "SELECT * FROM Questions"
+            text : "SELECT * FROM Questions"
         }
         pool.query(query).then(questions => {
             if(questions.rowCount > 0){
@@ -28,29 +27,18 @@ class Questions {
     static getQuestion(req, res){
        const { questionId } = req.params;
        let answers;
-        const query = {
-            text: "SELECT * FROM Questions WHERE id = $1",
-            values: [questionId]
-        }
+        const query = {text: "SELECT * FROM Questions WHERE id = $1", values: [questionId] }
         pool.query(query).then(question => {
             if(question.rowCount > 0){
-                pool.query({
-                    text: "SELECT * FROM Answers WHERE question_id = $1",
-                    values: [questionId]
-                }).then(answers => {
+                pool.query({ text: "SELECT * FROM Answers WHERE question_id = $1", values: [questionId]})
+                .then(answers => {
                     answers.rowCount > 0 ? answers = answers.rows : answers = [];
                     return res.status(201).json({
-                       questionDetail: question.rows[0],
-                        answers,
-                        message: 'Success',
+                       questionDetail: question.rows[0], answers, message: 'Success',
                    }); 
-            });
-                
-            }
-            else {
-                return res.status(400).json({
-                    message: 'no questions found',
-                    error: true,
+            });                
+            } else {
+                return res.status(400).json({ message: 'no questions found', error: true,
                   });
             }    
         })
