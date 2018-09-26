@@ -7,37 +7,22 @@ class Answers {
         const { questionId } = req.params;
         const { id, name } = req.authData;
         const { body } = req.body;
-        console.log(questionId)
             // check if question exists
-        let query = {
-                text: "SELECT * FROM Questions WHERE id = $1",
-                values: [questionId]
-            }
+        let query = { text: "SELECT * FROM Questions WHERE id = $1", values: [questionId]}
         pool.query(query).then(response => {
             if(response.rowCount > 0 ){
                 if(response.rows[0].user_id === id){
-                    return res.status(401).json({
-                        message: 'You cannot comment on your question',
-                       error: true,
-                      });
+                    return res.status(401).json({ message: 'You cannot comment on your question', error: true });
                 }
                 query = {
                     text: "INSERT INTO Answers(answer, question_id, user_id, user_name) VALUES($1, $2, $3, $4) RETURNING *",
                     values: [body, questionId, id, name]
                 }
                 pool.query(query).then(answer => {
-                   
-                    return res.status(201).json({
-                        message: 'succefully created answer',
-                       error: false
-                      });
+                    return res.status(201).json({message: 'succefully created answer',error: false});
                 })
-            }
-            else{
-                return res.status(404).json({
-                    message: 'this question does not exist',
-                   error: true,
-                  });
+            }else{
+                return res.status(404).json({message: 'this question does not exist', error: true });
             }
         })
        
