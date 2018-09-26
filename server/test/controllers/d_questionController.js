@@ -157,7 +157,7 @@ describe('Questions', () => {
       it('it should not get questions that does not exist ', (done) => {
   
         chai.request(app)
-          .get('/api/v1/question/100')
+          .get('/api/v1/question/50')
           .end((err, res) => {
             expect(res.body.message).to.eql('no questions found');
             expect(res.body.error).to.eql(true);

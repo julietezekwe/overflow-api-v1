@@ -53,10 +53,11 @@ class Answers {
         }
         pool.query(query).then(question => {
            if(question.rowCount > 0 && question.rows[0].user_id === id){
+              
                console.log("I own the question")
                query = {
-                text : "UPDATE Answers SET accepted = $1 WHERE id = $2 AND user_id = $3",
-                values: [ 1, answerId, id]
+                text : "UPDATE Answers SET accepted = $1 WHERE id = $2",
+                values: [ 1, answerId]
               }
               pool.query(query).then(response => {
                 if(response.rowCount > 0){

@@ -27,7 +27,6 @@ class Questions {
     }
     static getQuestion(req, res){
        const { questionId } = req.params;
-       let questionDetail;
        let answers;
         const query = {
             text: "SELECT * FROM Questions WHERE id = $1",
@@ -41,21 +40,17 @@ class Questions {
                 }).then(answers => {
                     answers.rowCount > 0 ? answers = answers.rows : answers = [];
                     return res.status(201).json({
-
-                        questionDetail: question.rows[0],
+                       questionDetail: question.rows[0],
                         answers,
                         message: 'Success',
-                        
-                      }); 
+                   }); 
             });
-
                 
             }
             else {
                 return res.status(400).json({
                     message: 'no questions found',
                     error: true,
-            
                   });
             }    
         })

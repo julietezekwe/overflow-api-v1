@@ -29,10 +29,9 @@ describe('User', () => {
   it('should register a user successfully', (done) => {
   
     const userDetails = {
-      name: 'Oge Ibezim',
-      password: 'Ibezim',
-      email: 'ogechi@gmail.com',
-    
+      name: 'Seyi Ibezim',
+      password: 'seyiii',
+      email: 'seyi@gmail.com'  
      
     };
     chai.request(app)
@@ -86,7 +85,7 @@ describe('User', () => {
   it('should not get a user that does not exist', (done) => {
    
     chai.request(app)
-      .get('/api/v1/auth/100')
+      .get('/api/v1/auth/50')
       .end((err, res) => {
         expect(res.body.message).to.eql('No user found');
         expect(res.status).to.equal(404);
