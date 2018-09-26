@@ -16,7 +16,8 @@
     "seed": "babel-node server/db/seed",
     "start:dev": "nodemon --exec babel-node app.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "coveralls": "nyc npm test&& nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc npm test&& nyc report --reporter=text-lcov | coveralls",
+    "test:middleware": "nyc mocha --exit --timeout 250000 ./server/test/middlewares/*.js --compilers js:babel-core/register"
   },
   "repository": {
     "type": "git",
