@@ -14,11 +14,17 @@ var _UserModel = require('../dummyModel/UserModel');
 
 var _UserModel2 = _interopRequireDefault(_UserModel);
 
+var _dotenv = require('dotenv');
+
+var _dotenv2 = _interopRequireDefault(_dotenv);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var secret = process.env.secret;
+_dotenv2.default.config();
+
+var secret = process.env.SECRETE_KEY;
 var User = _UserModel2.default.User;
 
 var verifyToken = function () {

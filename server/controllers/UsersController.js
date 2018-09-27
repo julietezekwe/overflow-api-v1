@@ -2,8 +2,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from '../dummyModel/UserModel';
 import pool from '../db/dbConfig';
+import dotenv from 'dotenv';
 
-const secret = "gy8fy nz0093887e";
+dotenv.config();
+
+const secret = process.env.SECRETE_KEY;
 const lastIndexOf = array => array[array.length - 1];
 class Users {
     static getAllUsers(req, res){
@@ -62,13 +65,14 @@ class Users {
        .then(emailfound => {
            if(emailfound.rowCount === 0){
             const query = {
-                text: 'INSERT INTO Users(name, email, password) VALUES($1, $2, $3) RETURNING name, email, joined',
+                text: 'INSERT INTO Users(name, email, password) VALUES($1, $2, $3) RETURNING id, name, email, joined',
                 values: [name, email, hash],
               };
               pool.query(query).then(user => {
                 const userDetail = user.rows[0];
                 const {id, name, joined } = userDetail;
                             const authDetail = { id, email, name, joined }
+                            
                             const token = jwt.sign(authDetail, secret, { expiresIn: '1hr' });            
                 return res.status(201).json({ authDetail, message: 'Signed up successfully', token });    
               })

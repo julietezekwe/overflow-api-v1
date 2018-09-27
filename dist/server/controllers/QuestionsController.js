@@ -14,6 +14,10 @@ var _UserModel = require('../dummyModel/UserModel');
 
 var _UserModel2 = _interopRequireDefault(_UserModel);
 
+var _dbConfig = require('../db/dbConfig');
+
+var _dbConfig2 = _interopRequireDefault(_dbConfig);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26,78 +30,70 @@ var Questions = function () {
     _createClass(Questions, null, [{
         key: 'getAllQuestions',
         value: function getAllQuestions(req, res) {
-            if (_QuestionModel2.default.length > 0) {
-                return res.status(201).json({
-                    questionModel: _QuestionModel2.default,
-                    message: 'success'
-                });
-            } else {
-                return res.status(400).json({
-                    message: 'no questions found',
-                    error: true
+            var query = {
+                text: "SELECT * FROM Questions"
+            };
+            _dbConfig2.default.query(query).then(function (questions) {
+                if (questions.rowCount > 0) {
+                    return res.status(201).json({
+                        questionModel: questions.rows,
+                        message: 'success'
+                    });
+                } else {
+                    return res.status(400).json({
+                        message: 'no questions found',
+                        error: true
 
-                });
-            }
+                    });
+                }
+            });
         }
     }, {
         key: 'getQuestion',
         value: function getQuestion(req, res) {
             var questionId = req.params.questionId;
 
-
-            var found = false;
-            var questionDetail = void 0;
-            _QuestionModel2.default.map(function (question) {
-                // found a question
-                if (question.id === Number(questionId)) {
-                    found = true;
-                    questionDetail = question;
-                    return res.status(201).json({
-                        questionDetail: questionDetail,
-                        message: 'Success'
-
+            var answers = void 0;
+            var query = { text: "SELECT * FROM Questions WHERE id = $1", values: [questionId] };
+            _dbConfig2.default.query(query).then(function (question) {
+                if (question.rowCount > 0) {
+                    _dbConfig2.default.query({ text: "SELECT * FROM Answers WHERE question_id = $1", values: [questionId] }).then(function (answers) {
+                        answers.rowCount > 0 ? answers = answers.rows : answers = [];
+                        return res.status(201).json({
+                            questionDetail: question.rows[0], answers: answers, message: 'Success'
+                        });
+                    });
+                } else {
+                    return res.status(400).json({ message: 'no questions found', error: true
                     });
                 }
             });
-            // wrong id
-            if (!found) {
-                return res.status(400).json({
-                    message: 'no questions found',
-                    error: true
-
-                });
-            }
         }
     }, {
         key: 'getUserQuestion',
         value: function getUserQuestion(req, res) {
             var userId = req.params.userId;
 
-            var found = false;
-            var questions = [];
-            _QuestionModel2.default.map(function (question) {
-                // found a question
-                if (question.userId === Number(userId)) {
-                    found = true;
-                    questions.push(question);
+            var query = {
+                text: "SELECT * FROM Questions WHERE user_id = $1",
+                values: [userId]
+            };
+            _dbConfig2.default.query(query).then(function (questions) {
+                if (questions.rowCount > 0) {
+                    return res.status(201).json({
+                        questions: questions.rows,
+                        user: req.authData,
+                        message: 'Success'
+
+                    });
+                } else {
+                    return res.status(400).json({
+                        message: 'no questions found',
+                        error: true
+
+                    });
                 }
             });
-            if (found) {
-                return res.status(201).json({
-                    questions: questions,
-                    user: req.authData,
-                    message: 'Success'
-
-                });
-            }
-            // wrong id
-            if (!found) {
-                return res.status(400).json({
-                    message: 'no questions found',
-                    error: true
-
-                });
-            }
         }
     }, {
         key: 'createQuestion',
@@ -109,15 +105,11 @@ var Questions = function () {
                 title = _req$body.title,
                 body = _req$body.body;
 
-            // push to the model
-
-            _QuestionModel2.default.push({
-                id: _QuestionModel2.default.length + 1,
-                title: title,
-                body: body,
-                userId: id,
-                created_at: new Date()
-            });
+            var query = {
+                text: "INSERT INTO Questions(title, question, user_id) VALUES($1, $2, $3)",
+                values: [title, body, id]
+            };
+            _dbConfig2.default.query(query).then(console.log);
 
             return res.status(201).json({
                 message: 'succefully created a question',
@@ -125,43 +117,106 @@ var Questions = function () {
             });
         }
     }, {
+        key: 'updateQuestion',
+        value: function updateQuestion(req, res) {
+            var questionId = req.params.questionId;
+            var _req$authData2 = req.authData,
+                id = _req$authData2.id,
+                email = _req$authData2.email;
+            var _req$body2 = req.body,
+                title = _req$body2.title,
+                body = _req$body2.body;
+
+            var query = {
+                text: "UPDATE Questions SET title = $1, question = $2 WHERE id = $3 AND user_id = $4",
+                values: [title, body, questionId, id]
+            };
+            _dbConfig2.default.query(query).then(function (response) {
+                if (response.rowCount > 0) {
+                    return res.status(201).json({
+                        message: 'succefully updated a question',
+                        error: false
+                    });
+                } else {
+                    return res.status(401).json({
+                        error: true,
+                        message: 'You have no question with this ID.'
+
+                    });
+                }
+            }).catch(console.log);
+        }
+    }, {
         key: 'deleteQuestion',
         value: function deleteQuestion(req, res) {
             var questionId = req.params.questionId;
             var id = req.authData.id;
 
-            var found = false;
+            ;
             var questionDetail = void 0;
-            _QuestionModel2.default.map(function (question, index) {
-                // found a question
-                if (question.id === Number(questionId)) {
 
-                    found = true;
-                    if (question.userId === id) {
-                        _QuestionModel2.default.splice(index, 1);
-                        return res.status(201).json({
-                            questionModel: _QuestionModel2.default,
-                            user: req.authData,
-                            message: 'Deleted successfully'
+            var query = {
+                text: "DELETE FROM Questions WHERE id = $1 AND user_id = $2",
+                values: [questionId, id]
+            };
 
-                        });
-                    } else {
-                        return res.status(401).json({
-                            error: true,
-                            message: 'You cant delete another users question'
+            _dbConfig2.default.query(query).then(function (response) {
+                if (response.rowCount > 0) {
+                    return res.status(201).json({
+                        message: 'Deleted successfully'
 
-                        });
-                    }
+                    });
+                } else {
+                    return res.status(401).json({
+                        error: true,
+                        message: 'You have no question with this ID.'
+
+                    });
                 }
             });
-            // wrong id
-            if (!found) {
-                return res.status(400).json({
-                    message: 'no question found',
-                    error: true
-
+        }
+    }, {
+        key: 'getQuestionsWithMostAnswers',
+        value: function getQuestionsWithMostAnswers(req, res) {
+            var query = {
+                text: "SELECT * FROM Questions ORDER BY answers DESC"
+            };
+            _dbConfig2.default.query(query).then(function (questions) {
+                return res.status(201).json({
+                    quesions: questions.rows
                 });
-            }
+            }).catch(function (err) {
+                if (err) {
+                    return res.status(400).json({
+                        error: true,
+                        message: "failed"
+                    });
+                }
+            });
+        }
+    }, {
+        key: 'searchQuestions',
+        value: function searchQuestions(req, res) {
+            var searchString = req.params.searchString;
+
+            var query = {
+                text: "SELECT * FROM Questions WHERE question LIKE $1 ORDER BY answers DESC",
+                values: ['%' + searchString + '%']
+            };
+
+            _dbConfig2.default.query(query).then(function (questions) {
+
+                return res.status(201).json({
+                    quesions: questions.rows
+                });
+            }).catch(function (err) {
+                if (err) {
+                    return res.status(404).json({
+                        error: true,
+                        message: "no question found"
+                    });
+                }
+            });
         }
     }]);
 

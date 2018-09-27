@@ -18,11 +18,21 @@ var _UserModel = require('../dummyModel/UserModel');
 
 var _UserModel2 = _interopRequireDefault(_UserModel);
 
+var _dbConfig = require('../db/dbConfig');
+
+var _dbConfig2 = _interopRequireDefault(_dbConfig);
+
+var _dotenv = require('dotenv');
+
+var _dotenv2 = _interopRequireDefault(_dotenv);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var secret = process.env.secret;
+_dotenv2.default.config();
+
+var secret = process.env.SECRETE_KEY;
 var lastIndexOf = function lastIndexOf(array) {
     return array[array.length - 1];
 };
@@ -35,10 +45,17 @@ var Users = function () {
     _createClass(Users, null, [{
         key: 'getAllUsers',
         value: function getAllUsers(req, res) {
-            return res.status(201).json({
-                userModel: _UserModel2.default,
-                message: 'success'
+            var query = {
+                text: 'SELECT name, email, joined FROM users'
+            };
+            _dbConfig2.default.query(query).then(function (users) {
+                if (users.rowCount > 0) {
+                    return res.status(201).json({
+                        users: users.rows,
+                        message: 'success'
 
+                    });
+                }
             });
         }
     }, {
@@ -46,33 +63,30 @@ var Users = function () {
         value: function getUser(req, res) {
             var userId = req.params.userId;
 
-            var found = false;
+
             var userDetail = void 0;
-            _UserModel2.default.map(function (user) {
-                // found a user
-                if (user.id === Number(userId)) {
-                    found = true;
-                    userDetail = {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        joined: user.joined
-                    };
+
+            var query = {
+                text: 'SELECT name, email, joined FROM users Where id = $1',
+                values: [userId]
+            };
+
+            _dbConfig2.default.query(query).then(function (user) {
+                if (user.rowCount === 1) {
+                    userDetail = user.rows[0];
                     return res.status(201).json({
                         userDetail: userDetail,
                         message: 'success'
 
                     });
+                } else {
+                    return res.status(404).json({
+                        message: 'No user found',
+                        error: true
+
+                    });
                 }
             });
-            // wrong id
-            if (!found) {
-                return res.status(404).json({
-                    message: 'No user found',
-                    error: true
-
-                });
-            }
         }
     }, {
         key: 'registerUsers',
@@ -82,83 +96,62 @@ var Users = function () {
                 email = _req$body.email,
                 password = _req$body.password;
 
-            var found = false;
-            _UserModel2.default.map(function (user) {
-                //    check if email is taken
-                if (user.email === email) {
-                    found = true;
-                    return res.status(400).json({
-                        message: "email already exist",
-                        error: true
+            var hash = _bcrypt2.default.hashSync(password, 10);
+            _dbConfig2.default.query({ text: "SELECT email from Users where email = $1", values: [email] }).then(function (emailfound) {
+                if (emailfound.rowCount === 0) {
+                    var query = {
+                        text: 'INSERT INTO Users(name, email, password) VALUES($1, $2, $3) RETURNING id, name, email, joined',
+                        values: [name, email, hash]
+                    };
+                    _dbConfig2.default.query(query).then(function (user) {
+                        var userDetail = user.rows[0];
+                        var id = userDetail.id,
+                            name = userDetail.name,
+                            joined = userDetail.joined;
+
+                        var authDetail = { id: id, email: email, name: name, joined: joined };
+
+                        var token = _jsonwebtoken2.default.sign(authDetail, secret, { expiresIn: '1hr' });
+                        return res.status(201).json({ authDetail: authDetail, message: 'Signed up successfully', token: token });
                     });
+                } else {
+                    return res.status(400).json({ message: "email already exist", error: true });
                 }
             });
-
-            if (!found) {
-                // push to the model
-                _UserModel2.default.push({
-                    id: _UserModel2.default.length + 1,
-                    name: name,
-                    email: email,
-                    password: _bcrypt2.default.hashSync(password, 10),
-                    joined: new Date()
-                });
-
-                var userDetail = lastIndexOf(_UserModel2.default);
-                // Assign token to user for 30sec
-                var token = _jsonwebtoken2.default.sign(userDetail, secret, { expiresIn: '30s' });
-                // Success message
-
-                return res.status(201).json({
-                    userDetail: userDetail,
-                    message: 'Signed up successfully',
-                    token: token
-                });
-            }
         }
     }, {
         key: 'loginUser',
         value: function loginUser(req, res) {
             var _req$body2 = req.body,
-                name = _req$body2.name,
                 email = _req$body2.email,
                 password = _req$body2.password;
 
-            var found = false;
             var userDetail = void 0;
-            _UserModel2.default.map(function (user) {
-                if (user.email === email) {
-                    found = true;
-                    userDetail = user;
+            var query = { text: 'SELECT * FROM users Where email = $1', values: [email] };
+            _dbConfig2.default.query(query).then(function (user) {
+                if (user.rowCount) {
+                    userDetail = user.rows[0];
+                    if (_bcrypt2.default.compareSync(password, userDetail.password)) {
+                        // Assign token to user for 30sec
+                        var _userDetail = userDetail,
+                            id = _userDetail.id,
+                            name = _userDetail.name,
+                            joined = _userDetail.joined;
+
+                        var authDetail = { id: id, email: email, name: name, joined: joined };
+                        var token = _jsonwebtoken2.default.sign(authDetail, secret, { expiresIn: '1hr' });
+                        // Success message
+                        return res.status(201).json({ message: 'logged in successfully', token: token });
+                    } else {
+                        return res.status(400).json({
+                            message: 'wrong credentials',
+                            error: true
+                        });
+                    }
+                } else {
+                    return res.status(400).json({ message: 'User does not exist', error: true });
                 }
             });
-
-            //user found
-            if (found) {
-                if (_bcrypt2.default.compareSync(password, userDetail.password)) {
-                    // Assign token to user for 30sec
-                    var token = _jsonwebtoken2.default.sign(userDetail, secret, { expiresIn: '1hr' });
-                    // Success message
-
-                    return res.status(201).json({
-                        userDetail: userDetail,
-                        message: 'logged in successfully',
-                        token: token
-                    });
-                } else {
-                    //  invalid password
-                    return res.status(400).json({
-                        message: 'wrong credentials',
-                        error: true
-                    });
-                }
-            } else {
-                //    user does not exist
-                return res.status(400).json({
-                    message: 'User does not exist',
-                    error: true
-                });
-            }
         }
     }]);
 

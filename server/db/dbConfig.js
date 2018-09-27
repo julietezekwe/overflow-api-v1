@@ -1,9 +1,17 @@
 import { Pool } from 'pg';
 
-const connectionString = 'postgresql://chidimma:password@localhost:5432/stack';
+import dotenv from 'dotenv';
+
+dotenv.config();
+let ssl = false;
+if(process.env.NODE_ENV == 'production') {
+ssl = true;
+}
+const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ 
-    connectionString
+    connectionString,
+    ssl
 })
-// const pool = new Pool(connectionString);
+
 
 export default pool;

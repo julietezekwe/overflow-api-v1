@@ -141,6 +141,46 @@ class Questions {
              }
          })
      }
+
+     static getQuestionsWithMostAnswers(req, res){
+         const query = {
+             text: "SELECT * FROM Questions ORDER BY answers DESC"
+         }
+         pool.query(query).then(questions => {
+             return res.status(201).json({
+                 quesions : questions.rows
+             })
+         }).catch(err => {
+             if(err){
+                 return res.status(400).json({
+                    error: true,
+                     message: "failed"
+                 })
+             }
+         })
+     }
+
+     static searchQuestions(req, res){
+         const { searchString } = req.params;
+        const query = {
+            text: "SELECT * FROM Questions WHERE question LIKE $1 ORDER BY answers DESC",
+            values: [`%${searchString}%`]
+        }
+       
+        pool.query(query).then(questions => {
+            
+            return res.status(201).json({
+                quesions : questions.rows
+            })
+        }).catch(err => {
+            if(err){
+                return res.status(404).json({
+                   error: true,
+                    message: "no question found"
+                })
+            }
+        })
+    }
 }
 
 export default Questions;

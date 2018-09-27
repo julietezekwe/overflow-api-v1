@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken';
 import models from '../dummyModel/UserModel';
+import dotenv from 'dotenv';
 
-const secret = "gy8fy nz0093887e";
+dotenv.config();
+
+const secret = process.env.SECRETE_KEY;
 const { User } = models;
 class verifyToken{
     static authenticate(req, res, next){

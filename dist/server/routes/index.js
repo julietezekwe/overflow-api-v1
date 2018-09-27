@@ -53,9 +53,13 @@ var getAllQuestions = _QuestionsController2.default.getAllQuestions,
     getQuestion = _QuestionsController2.default.getQuestion,
     createQuestion = _QuestionsController2.default.createQuestion,
     getUserQuestion = _QuestionsController2.default.getUserQuestion,
-    deleteQuestion = _QuestionsController2.default.deleteQuestion;
+    updateQuestion = _QuestionsController2.default.updateQuestion,
+    deleteQuestion = _QuestionsController2.default.deleteQuestion,
+    getQuestionsWithMostAnswers = _QuestionsController2.default.getQuestionsWithMostAnswers,
+    searchQuestions = _QuestionsController2.default.searchQuestions;
 var createAnswer = _AnswersController2.default.createAnswer,
-    getAnswer = _AnswersController2.default.getAnswer;
+    getAnswer = _AnswersController2.default.getAnswer,
+    updateAnswer = _AnswersController2.default.updateAnswer;
 
 //  destructure middlewares
 
@@ -79,7 +83,11 @@ router.get('/question/:questionId', idChecker, getQuestion);
 router.get('/question/:userId/questions', authenticate, idChecker, getUserQuestion);
 router.get('/question/:questionId/answers', idChecker, getAnswer);
 router.post('/question', createQuestionValidator, authenticate, createQuestion);
+router.put('/question/:questionId', idChecker, createQuestionValidator, authenticate, updateQuestion);
 router.post('/question/:questionId/answer', idChecker, createAnswerValidator, authenticate, createAnswer);
+router.put('/question/:questionId/answers/:answerId', idChecker, createAnswerValidator, authenticate, updateAnswer);
 router.delete('/question/:questionId', idChecker, authenticate, deleteQuestion);
+router.get('/questions/answers', getQuestionsWithMostAnswers);
+router.get('/questions/:searchString/search', searchQuestions);
 
 exports.default = router;
