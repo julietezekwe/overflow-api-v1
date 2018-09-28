@@ -156,7 +156,7 @@ describe('Answers', () => {
   
     const answer = {
       
-        body: "accept"
+        body: "1"
     };
     chai.request(app)
       .put('/api/v1/question/1/answers/2')
