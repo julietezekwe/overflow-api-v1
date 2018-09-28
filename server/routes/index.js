@@ -14,7 +14,7 @@ const router = express.Router();
 const { getAllUsers, registerUsers, loginUser, getUser } = Users;
 const { getAllQuestions, getQuestion, createQuestion, getUserQuestion,
        updateQuestion, deleteQuestion, getQuestionsWithMostAnswers, searchQuestions } = Questions;
-const { createAnswer, getAnswer, updateAnswer } = Answers;
+const { createAnswer, getAnswer, updateAnswer, commentOnAnswer, updateLike } = Answers;
 
 //  destructure middlewares
 const { userSignUp, userLogin } = userValidator;
@@ -43,7 +43,10 @@ router.put('/question/:questionId', idChecker, createQuestionValidator, authenti
 router.post('/question/:questionId/answer', idChecker, createAnswerValidator, authenticate, createAnswer);
 router.put('/question/:questionId/answers/:answerId', idChecker, createAnswerValidator, authenticate, updateAnswer);
 router.delete('/question/:questionId', idChecker, authenticate, deleteQuestion );
+// new endpoints
 router.get('/questions/answers', getQuestionsWithMostAnswers);
 router.get('/questions/:searchString/search', searchQuestions);
+router.post('/answer/:answerId/comment', idChecker, createAnswerValidator, authenticate, commentOnAnswer);
+router.put('/answer/:answerId/likes', idChecker, createAnswerValidator, authenticate, updateLike)
 
 export default router;

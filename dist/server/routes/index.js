@@ -59,7 +59,9 @@ var getAllQuestions = _QuestionsController2.default.getAllQuestions,
     searchQuestions = _QuestionsController2.default.searchQuestions;
 var createAnswer = _AnswersController2.default.createAnswer,
     getAnswer = _AnswersController2.default.getAnswer,
-    updateAnswer = _AnswersController2.default.updateAnswer;
+    updateAnswer = _AnswersController2.default.updateAnswer,
+    commentOnAnswer = _AnswersController2.default.commentOnAnswer,
+    updateLike = _AnswersController2.default.updateLike;
 
 //  destructure middlewares
 
@@ -87,7 +89,10 @@ router.put('/question/:questionId', idChecker, createQuestionValidator, authenti
 router.post('/question/:questionId/answer', idChecker, createAnswerValidator, authenticate, createAnswer);
 router.put('/question/:questionId/answers/:answerId', idChecker, createAnswerValidator, authenticate, updateAnswer);
 router.delete('/question/:questionId', idChecker, authenticate, deleteQuestion);
+// new endpoints
 router.get('/questions/answers', getQuestionsWithMostAnswers);
 router.get('/questions/:searchString/search', searchQuestions);
+router.post('/answer/:answerId/comment', idChecker, createAnswerValidator, authenticate, commentOnAnswer);
+router.put('/answer/:answerId/likes', idChecker, createAnswerValidator, authenticate, updateLike);
 
 exports.default = router;
