@@ -94,7 +94,11 @@ class Users {
                         const authDetail = { id, email, name, joined };
                         const token = jwt.sign(authDetail, secret, { expiresIn: '1hr' });
                         // Success message
-                        return res.status(201).json({ message: 'logged in successfully', token });
+                        return res.status(201).json({ 
+                            message: 'logged in successfully', 
+                            token,
+                            userDetail
+                        });
                     } else{
                         return res.status(400).json({
                             message: 'wrong credentials',

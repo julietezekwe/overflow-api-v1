@@ -135,7 +135,7 @@ describe('Answers', function () {
 
       var answer = {
 
-        body: "accept"
+        body: "1"
       };
       _chai2.default.request(_app2.default).put('/api/v1/question/1/answers/2').set('Authorization', authToken).send(answer).end(function (err, res) {
         expect(res.body.message).to.eql('You have accepted this answer');

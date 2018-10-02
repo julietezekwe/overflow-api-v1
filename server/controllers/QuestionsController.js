@@ -43,7 +43,12 @@ class Questions {
             }    
         })
   
-             
+            
+        
+
+
+
+
     }
     static getUserQuestion(req, res){
         const { userId } = req.params;
@@ -163,7 +168,7 @@ class Questions {
      static searchQuestions(req, res){
          const { searchString } = req.params;
         const query = {
-            text: "SELECT * FROM Questions WHERE question LIKE $1 ORDER BY answers DESC",
+            text: "SELECT * FROM Questions WHERE question ILIKE $1 ORDER BY answers DESC",
             values: [`%${searchString}%`]
         }
        

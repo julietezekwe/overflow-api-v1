@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 let ssl = false;
 if(process.env.NODE_ENV == 'production') {
-ssl = true;
+    ssl = true;
 }
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ 

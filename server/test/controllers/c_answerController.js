@@ -1,7 +1,9 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../app';
-
+import { userDetails, answerDetails } from "../testData";
+const { registeredUser } = userDetails;
+const { emptyField, validAnswer, answerAccept, answerUpdate } = answerDetails
 chai.use(chaiHttp);
 const { expect } = chai;
 
@@ -13,13 +15,10 @@ describe('Answers', () => {
   */
     describe('/POST REQUESTS', () => {
   before((done) => {
-    const userDetails = {
-      email: 'juliet@gmail.com',
-      password: 'juliet'
-    };
+   
     chai.request(app)
       .post('/api/v1/auth/login')
-      .send(userDetails)
+      .send(registeredUser)
       .end((err, res) => {
         authToken = res.body.token;
         done();
@@ -27,14 +26,9 @@ describe('Answers', () => {
   });
 
   it('it should not post a answer with empty feilds', (done) => {
-    
-    const answer = {
-      body: ' ',
-      
-    };
     chai.request(app)
       .post('/api/v1/question/1/answer')
-      .send(answer)
+      .send(emptyField)
       .end((err, res) => {
         expect(res.body.message).to.eql('Please fill in all fields');
         expect(res.body.error).to.eql(true);
@@ -45,14 +39,9 @@ describe('Answers', () => {
 
 
   it('it should not post answer for user without token', (done) => {
-  
-    const answer = {
-       
-        body: "body"
-    };
     chai.request(app)
      .post('/api/v1/question/2/answer')
-      .send(answer)
+      .send(validAnswer)
       .end((err, res) => {
         expect(res.body.message).to.eql('Kindly sign in');
         expect(res.body.error).to.eql(true);
@@ -63,13 +52,10 @@ describe('Answers', () => {
 
   it('it should not post answer for user with wrong token', (done) => {
     const wrongToken = `${authToken}somewrong text`;
-    const answer = {
-        body: "body"
-    };
     chai.request(app)
       .post('/api/v1/question/2/answer')
       .set('Authorization', wrongToken)
-      .send(answer)
+      .send(validAnswer)
       .end((err, res) => {
         expect(res.body.message).to.eql('Kindly sign in, wrong authentication');
         expect(res.body.error).to.eql(true);
@@ -80,13 +66,10 @@ describe('Answers', () => {
 
   it('should post answer for user with valid token and question does not belong to user', (done) => {
   
-    const question = {
-        body: "body"
-    };
     chai.request(app)
       .post('/api/v1/question/2/answer')
       .set('Authorization', authToken)
-      .send(question)
+      .send(validAnswer)
       .end((err, res) => {
         expect(res.body.message).to.eql('succefully created answer');
         expect(res.body.error).to.eql(false);
@@ -95,15 +78,10 @@ describe('Answers', () => {
       });
     });
     it('should not post answer for user that owns the question', (done) => {
-  
-      const answer = {
-        
-          body: "body"
-      };
       chai.request(app)
         .post('/api/v1/question/1/answer')
         .set('Authorization', authToken)
-        .send(answer)
+        .send(validAnswer)
         .end((err, res) => {
           expect(res.body.message).to.eql('You cannot comment on your question');
           expect(res.body.error).to.eql(true);
@@ -115,14 +93,10 @@ describe('Answers', () => {
       
     it('should not update answer that does not exist', (done) => {
   
-      const answer = {
-      
-          body: "body edit"
-      };
       chai.request(app)
         .put('/api/v1/question/4/answers/50')
         .set('Authorization', authToken)
-        .send(answer)
+        .send(answerUpdate)
         .end((err, res) => {
           expect(res.body.message).to.eql('You have no answer with this ID.');
           expect(res.body.error).to.eql(true);
@@ -133,15 +107,10 @@ describe('Answers', () => {
 
       
   it('should update answer for user that owns the answer', (done) => {
-  
-    const answer = {
-      
-        body: "body edit"
-    };
     chai.request(app)
       .put('/api/v1/question/2/answers/1')
       .set('Authorization', authToken)
-      .send(answer)
+      .send(answerUpdate)
       .end((err, res) => {
         expect(res.body.message).to.eql('succefully updated an answer');
         expect(res.body.error).to.eql(false);
@@ -150,18 +119,11 @@ describe('Answers', () => {
       });
     });
 
-    
-      
   it('should accept the answer for the question owner', (done) => {
-  
-    const answer = {
-      
-        body: "1"
-    };
     chai.request(app)
       .put('/api/v1/question/1/answers/2')
       .set('Authorization', authToken)
-      .send(answer)
+      .send(answerAccept)
       .end((err, res) => {
         expect(res.body.message).to.eql('You have accepted this answer');
         expect(res.body.error).to.eql(false);
@@ -172,14 +134,10 @@ describe('Answers', () => {
   
   it('should not post answer for a question that does not exist', (done) => {
   
-    const answer = {
-
-        body: "body"
-    };
     chai.request(app)
       .post('/api/v1/question/50/answer')
       .set('Authorization', authToken)
-      .send(answer)
+      .send(validAnswer)
       .end((err, res) => {
         expect(res.body.message).to.eql('this question does not exist');
         expect(res.body.error).to.eql(true);

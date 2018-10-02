@@ -1,19 +1,14 @@
-;
 import pool from "../db/dbConfig";
+import queries from "./queries";
 
+const { findAll, findWithCondition, update, insert } = queries;
 class Answers {
 
    static createAnswer(req, res){
         const { questionId } = req.params;
         const { id, name } = req.authData;
         const { body } = req.body;
-       
-            // check if question exists
-        let query = {
-                text: "SELECT * FROM Questions WHERE id = $1",
-                values: [questionId]
-            }
-        pool.query(query).then(response => {
+        findWithCondition("Questions", `id=${questionId}`).then(response => {
             if(response.rowCount > 0 ){
                 if(response.rows[0].user_id === id){
                     return res.status(401).json({
@@ -21,16 +16,10 @@ class Answers {
                        error: true,
                       });
                 }
-              
-                query = {
-                    text: "INSERT INTO Answers(answer, question_id, user_id, user_name) VALUES($1, $2, $3, $4) RETURNING *",
-                    values: [body, questionId, id, name]
-                }
-                pool.query(query).then(answer => {
-                   pool.query({
-                       text: "UPDATE Questions SET answers= answers+1 WHERE id = $1",
-                       values : [questionId]
-                   });
+               
+                insert('Answers', "answer, question_id, user_id, user_name", "$1, $2, $3, $4", [body, questionId, id, name])
+                .then(answer => {
+                   update("Questions", "answers= answers+1", `id = ${questionId}`);
                     return res.status(201).json({
                         message: 'succefully created answer',
                        error: false
@@ -51,19 +40,9 @@ class Answers {
         const {questionId, answerId } = req.params;
         const {id, email } = req.authData;
         const { body } = req.body;
-        let query = {
-            text: "SELECT * FROM Questions WHERE id = $1",
-            values: [questionId]
-        }
-        pool.query(query).then(question => {
+        findWithCondition("Questions", `id=${questionId}`).then(question => {
            if(question.rowCount > 0 && question.rows[0].user_id === id){
-              
-               console.log("I own the question")
-               query = {
-                text : "UPDATE Answers SET accepted = $1 WHERE id = $2",
-                values: [ Number(body), answerId]
-              }
-              pool.query(query).then(response => {
+             update("Answers", `accepted = $1`, `id = $2`, [Number(body), answerId]).then(response => {
                 if(response.rowCount > 0){
                     return res.status(201).json({
                         message: 'You have accepted this answer',
@@ -72,11 +51,7 @@ class Answers {
                 }
               })
            }else{
-            query = {
-                text : "UPDATE Answers SET answer = $1 WHERE id = $2 AND user_id = $3",
-                values: [body, answerId, id]
-            }
-            pool.query(query).then(response => {
+            update("Answers", `answer = $1`, `id = $2 AND user_id = $3`, [body, answerId, id]).then(response => {
                 if(response.rowCount > 0){
                     return res.status(201).json({
                         message: 'succefully updated an answer',
@@ -104,13 +79,11 @@ class Answers {
 
     static getAnswer(req, res){
         const { questionId } = req.params;              
-         const query = {
-             text: "SELECT * FROM Answers WHERE question_id = $1",
-             values: [questionId]
-         }
-         pool.query(query).then(answers => {
+        findWithCondition("Questions", `id=${questionId}`)
+        .then(answers => {
 
              if(answers.rowCount > 0){
+                 
                      return res.status(201).json({
  
                          answers: answers.rows,
@@ -127,19 +100,24 @@ class Answers {
              }    
          });
    
-        } 
+        }
 
         static commentOnAnswer(req, res){
+         /**
+          * @static
+          * @param {*} res
+          * @param {*} req
+          * @description creates an answer to a question
+          * @returns success message
+          */
+
             const { answerId } = req.params;
             const { id, name } = req.authData;
             const { body } = req.body;
            
                 // check if question exists
-            let query = {
-                    text: "SELECT * FROM Answers WHERE id = $1",
-                    values: [answerId]
-                }
-            pool.query(query).then(response => {
+                findWithCondition("Questions", `id=${answerId}`)
+                .then(response => {
                 if(response.rowCount > 0 ){
                     if(response.rows[0].user_id === id){
                         return res.status(401).json({
@@ -147,16 +125,9 @@ class Answers {
                            error: true,
                           });
                     }
-                  
-                    query = {
-                        text: "INSERT INTO Comments(comment, answer_id, user_id, user_name) VALUES($1, $2, $3, $4) RETURNING *",
-                        values: [body,answerId, id, name]
-                    }
-                    pool.query(query).then(answer => {
-                       pool.query({
-                           text: "UPDATE Answers SET comments= comments+1 WHERE id = $1",
-                           values : [answerId]
-                       });
+
+                    insert("Comments", "comment, answer_id, user_id, user_name", "$1, $2, $3, $4", [body,answerId, id, name]).then(answer => {
+                       update("Comments", "comments = comments+1", "id = $1", [answerId])
                         return res.status(201).json({
                             message: 'succefully created comment',
                            error: false
@@ -178,20 +149,12 @@ class Answers {
         
             const { id } = req.authData;
             const { body } = req.body;
-            let query = {
-                text: "SELECT * FROM Likes WHERE user_id = $1 AND answer_id = $2",
-                values: [id, answerId]
-            }
-            pool.query(query).then(likes => {
+            findWithCondition("Likes", `user_id=${id} AND answer_id = ${answerId}`).then(likes => {
                if(likes.rowCount > 0 ){
              
                  const like_id = likes.rows[0].id;
-                  
-                   query = {
-                    text : "UPDATE Likes SET like_or_dislike = $1 WHERE id = $2",
-                    values: [ Number(body), like_id]
-                  }
-                  pool.query(query).then(response => {
+    
+                  update("Likes", "like_or_dislike", "id = $2", [ Number(body), like_id]).then(response => {
                     if(response.rowCount > 0){
                         return res.status(201).json({
                             message: 'Success',
@@ -200,11 +163,8 @@ class Answers {
                     }
                   })
                }else{
-                query = {
-                    text : "INSERT INTO Likes(answer_id, user_id, like_or_dislike) VALUES ($1, $2, $3)",
-                    values: [answerId, id, Number(body)]
-                }
-                pool.query(query).then(response => {
+            
+                insert("Likes", "answer_id, user_id, like_or_dislike", "$1, $2, $3", [answerId, id, Number(body)]).then(response => {
                     if(response.rowCount > 0){
                         return res.status(201).json({
                             message: 'Success',

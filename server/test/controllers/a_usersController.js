@@ -1,25 +1,17 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../app';
-
+import { userDetails } from "../testData";
 chai.use(chaiHttp);
 const { expect } = chai;
-
+const { registeredUser, newUser, wrongPassword } = userDetails;
 let authToken; 
 describe('User', () => {
   it('not register a user if email is not unique', (done) => {
   
-    const userDetails = {
-   
-      name: 'Juliet chidimma',
-      password: 'juliet',
-      email: 'juliet@gmail.com',
-     
-     
-    };
     chai.request(app)
       .post('/api/v1/auth/signup')
-      .send(userDetails)
+      .send(registeredUser)
       .end((err, res) => {
         expect(res.body.message).to.eql('email already exist');
         expect(res.status).to.equal(400);
@@ -27,16 +19,10 @@ describe('User', () => {
       });
   });
   it('should register a user successfully', (done) => {
-  
-    const userDetails = {
-      name: 'Seyi Ibezim',
-      password: 'seyiii',
-      email: 'seyi@gmail.com'  
-     
-    };
+
     chai.request(app)
     .post('/api/v1/auth/signup')
-    .send(userDetails)
+    .send(newUser)
     .end((err, res) => {
       expect(res.body.message).to.eql('Signed up successfully');
       expect(res.body).to.have.property('token');
@@ -48,13 +34,9 @@ describe('User', () => {
 
   it('it should not login a user with wrong credential', (done) => {
    
-    const userDetails = {
-      email: 'juliet@gmail.com',
-      password: 'jul'
-    };
     chai.request(app)
       .post('/api/v1/auth/login')
-      .send(userDetails)
+      .send(wrongPassword)
       .end((err, res) => {
         expect(res.body).to.be.a('object');
         expect(res.body.message).to.eql('wrong credentials');
@@ -65,13 +47,10 @@ describe('User', () => {
 
   it('it should login a valid user', (done) => {
    
-    const userDetails = {
-      email: 'juliet@gmail.com',
-      password: 'juliet'
-    };
+   
     chai.request(app)
       .post('/api/v1/auth/login')
-      .send(userDetails)
+      .send(registeredUser)
       .end((err, res) => {
         expect(res.body).to.be.a('object');
         expect(res.body.message).eql('logged in successfully');

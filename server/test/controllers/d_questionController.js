@@ -1,7 +1,9 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../app';
-
+import { userDetails, questionDetails } from "../testData";
+ const  { registeredUser } = userDetails;
+ const { emptyField, validQuestion } = questionDetails;
 chai.use(chaiHttp);
 const { expect } = chai;
 
@@ -13,13 +15,10 @@ describe('Questions', () => {
   */
     describe('/POST REQUESTS', () => {
   before((done) => {
-    const userDetails = {
-      email: 'juliet@gmail.com',
-      password: 'juliet'
-    };
+    
     chai.request(app)
       .post('/api/v1/auth/login')
-      .send(userDetails)
+      .send(registeredUser)
       .end((err, res) => {
         authToken = res.body.token;
         done();
@@ -27,15 +26,9 @@ describe('Questions', () => {
   });
 
   it('it should not post a question with empty feilds', (done) => {
-    
-    const question = {
-      title: '   ',
-      body: 'The body exists',
-      
-    };
     chai.request(app)
       .post('/api/v1/question')
-      .send(question)
+      .send(emptyField)
       .end((err, res) => {
         expect(res.body.message).to.eql('Please fill in all fields');
         expect(res.body.error).to.eql(true);
@@ -46,14 +39,9 @@ describe('Questions', () => {
 
 
   it('it should not post question for user without token', (done) => {
-  
-    const question = {
-        title: "title",
-        body: "body"
-    };
     chai.request(app)
       .post('/api/v1/question')
-      .send(question)
+      .send(validQuestion)
       .end((err, res) => {
         expect(res.body.message).to.eql('Kindly sign in');
         expect(res.body.error).to.eql(true);
@@ -64,14 +52,10 @@ describe('Questions', () => {
 
   it('it should not post question for user with wrong token', (done) => {
     const wrongToken = `${authToken}somewrong text`;
-    const question = {
-        title: "title",
-        body: "body"
-    };
     chai.request(app)
       .post('/api/v1/question')
       .set('Authorization', wrongToken)
-      .send(question)
+      .send(validQuestion)
       .end((err, res) => {
         expect(res.body.message).to.eql('Kindly sign in, wrong authentication');
         expect(res.body.error).to.eql(true);
@@ -81,15 +65,10 @@ describe('Questions', () => {
   });
 
   it('should post question for user with valid token', (done) => {
-  
-    const question = {
-        title: "title",
-        body: "body"
-    };
     chai.request(app)
       .post('/api/v1/question')
       .set('Authorization', authToken)
-      .send(question)
+      .send(validQuestion)
       .end((err, res) => {
         expect(res.body.message).to.eql('succefully created a question');
         expect(res.body.error).to.eql(false);
@@ -98,9 +77,6 @@ describe('Questions', () => {
       });
     });
   });
-
- 
-
   /*
     * Test the /GET requests
   */
@@ -219,13 +195,7 @@ describe('Questions', () => {
 });
 
 // delete question
-describe('/DELETE REQUESTS', () => {
-
-  
-    
-  
-   
-  
+describe('/DELETE REQUESTS', () => {  
     it('it should not delete question for user without token', (done) => {
   
         chai.request(app)

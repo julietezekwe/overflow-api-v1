@@ -24,9 +24,9 @@ app.use('/api/v1/', routes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Setup a default catch-all route
-app.get('/', (req, res)=> {res.send('ok')});
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../clients/index.html'));
-});
+// app.get('/', (req, res)=> {res.send('ok')});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../clients/index.html'));
+// });
 
 export default app;

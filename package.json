@@ -11,13 +11,15 @@
     "test": "npm run migration && nyc mocha --exit --timeout 250000 ./server/test/**/*.js --compilers js:babel-core/register",
     "babel-node": "babel-node app --presets=env",
     "start": "node dist/app.js",
-    "unmigrate" : "babel-node server/db/unmigrate",
+    "unmigrate": "babel-node server/db/unmigrate",
     "migration": " npm run unmigrate && babel-node server/db/migration && npm run seed",
     "seed": "babel-node server/db/seed",
     "start:dev": "nodemon --exec babel-node app.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coveralls": "nyc npm test&& nyc report --reporter=text-lcov | coveralls",
-    "test:middleware": "nyc mocha --exit --timeout 250000 ./server/test/middlewares/*.js --compilers js:babel-core/register"
+    "test:middleware": "nyc mocha --exit --timeout 250000 ./server/test/middlewares/*.js --compilers js:babel-core/register",
+    "test:controllers": "nyc mocha --exit --timeout 250000 ./server/test/controllers/*.js --compilers js:babel-core/register"
+
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,7 @@
     "eslint": "^5.5.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.1",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
