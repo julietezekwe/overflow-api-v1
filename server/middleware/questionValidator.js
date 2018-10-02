@@ -1,3 +1,5 @@
+import errorHandler from "./errors";
+
 class questionValidator{
     static createQuestionValidator(req, res, next){
       if (req.body.title.trim() === '' || req.body.body.trim() === '') {
@@ -11,12 +13,7 @@ class questionValidator{
   
       const errors = req.validationErrors();
       const validationErrors = [];
-      if (errors) {
-        errors.map(err => validationErrors.push(err.msg));
-        return res.status(400).json({
-          errors: validationErrors
-        });
-      }
+      errorHandler();
       return next();
     }
     }

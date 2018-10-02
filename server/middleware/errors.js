@@ -1,13 +1,12 @@
-const ErrorHandler= (errors, code) => {
-  
- 
-        if(errors){
-             let validationErrors = [];
+const errorHandler = () => {
+    return ({
+        if (errors) {
             errors.map(err => validationErrors.push(err.msg));
             return res.status(400).json({
               errors: validationErrors
             });
-        }
-  }
+          }
+    })
+}
 
-export default ErrorHandler;
+export default errorHandler;

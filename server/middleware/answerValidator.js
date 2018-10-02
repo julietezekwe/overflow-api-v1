@@ -1,3 +1,4 @@
+import errorHandler from "./errors";
 class answerValidator {
     static createAnswerValidator(req, res, next){
       if (req.body.body.trim() === '') {
@@ -9,12 +10,7 @@ class answerValidator {
       req.check('body', 'response Body is required').notEmpty();
       const errors = req.validationErrors();
       const validationErrors = [];
-      if (errors) {
-        errors.map(err => validationErrors.push(err.msg));
-        return res.status(400).json({
-          errors: validationErrors
-        });
-      }
+      errorHandler();
       return next();
     }
   }

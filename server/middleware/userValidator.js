@@ -1,3 +1,5 @@
+import errorHandler from "./errors";
+
 class userValidator{
   static userSignUp(req, res, next){
       if (req.body.name.trim() === '' || req.body.email.trim() === '' || req.body.password.trim() === '') {
@@ -16,12 +18,7 @@ class userValidator{
 
       const errors = req.validationErrors();
       const validationErrors = [];
-      if (errors) {
-        errors.map(err => validationErrors.push(err.msg));
-        return res.status(400).json({
-          errors: validationErrors
-        });
-      }
+      errorHandler();
     }
       return next();
     }
@@ -37,12 +34,7 @@ class userValidator{
           req.check('password', 'Password is required').notEmpty();
           const errors = req.validationErrors();
           const validationErrors = [];
-          if (errors) {
-            errors.map(err => validationErrors.push(err.msg));
-            return res.status(400).json({
-              errors: validationErrors
-            });
-          }
+          errorHandler();
     }
       return next();
     }
