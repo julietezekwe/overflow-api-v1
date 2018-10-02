@@ -16,22 +16,24 @@ const queries = {
             })
         );
     },
-
-    update : (table, input, placeholder, values) => {
-        return (
-           pool.query({
-               text: `UPDATE ${table} SET ${input} WHERE ${placeholder}`,
-               values: values
-           })
-      )
-    },
-    insert : (table, input, placeholder, values) => {
-        return(  pool.query({
+    make : (action, table, input, placeholder, values) => {
+        if(action === "update"){
+            return (
+                pool.query({
+                    text: `UPDATE ${table} SET ${input} WHERE ${placeholder}`,
+                    values: values
+                })
+           )
+        } 
+        
+        else{
+            return(  pool.query({
                 text: `INSERT INTO ${table}(${input})  VALUES(${placeholder}) RETURNING *`,
                 values : values
                 
             })
         )
+      }
     }
 }
 

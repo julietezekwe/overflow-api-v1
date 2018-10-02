@@ -1,7 +1,7 @@
 import pool from "../db/dbConfig";
 import queries from "./queries";
 
-const { findAll, findWithCondition, update, insert } = queries;
+const { findAll, findWithCondition, make } = queries;
 class Answers {
 
    static createAnswer(req, res){
@@ -17,9 +17,9 @@ class Answers {
                       });
                 }
                
-                insert('Answers', "answer, question_id, user_id, user_name", "$1, $2, $3, $4", [body, questionId, id, name])
+                make('insert', 'Answers', "answer, question_id, user_id, user_name", "$1, $2, $3, $4", [body, questionId, id, name])
                 .then(answer => {
-                   update("Questions", "answers= answers+1", `id = ${questionId}`);
+                   make('update', "Questions", "answers= answers+1", `id = ${questionId}`);
                     return res.status(201).json({
                         message: 'succefully created answer',
                        error: false
@@ -42,7 +42,7 @@ class Answers {
         const { body } = req.body;
         findWithCondition("Questions", `id=${questionId}`).then(question => {
            if(question.rowCount > 0 && question.rows[0].user_id === id){
-             update("Answers", `accepted = $1`, `id = $2`, [Number(body), answerId]).then(response => {
+             make("update", "Answers", `accepted = $1`, `id = $2`, [Number(body), answerId]).then(response => {
                 if(response.rowCount > 0){
                     return res.status(201).json({
                         message: 'You have accepted this answer',
@@ -51,7 +51,7 @@ class Answers {
                 }
               })
            }else{
-            update("Answers", `answer = $1`, `id = $2 AND user_id = $3`, [body, answerId, id]).then(response => {
+            make("update", "Answers", `answer = $1`, `id = $2 AND user_id = $3`, [body, answerId, id]).then(response => {
                 if(response.rowCount > 0){
                     return res.status(201).json({
                         message: 'succefully updated an answer',
@@ -126,8 +126,8 @@ class Answers {
                           });
                     }
 
-                    insert("Comments", "comment, answer_id, user_id, user_name", "$1, $2, $3, $4", [body,answerId, id, name]).then(answer => {
-                       update("Comments", "comments = comments+1", "id = $1", [answerId])
+                    make("insert", "Comments", "comment, answer_id, user_id, user_name", "$1, $2, $3, $4", [body,answerId, id, name]).then(answer => {
+                      make("update", "Comments", "comments = comments+1", "id = $1", [answerId])
                         return res.status(201).json({
                             message: 'succefully created comment',
                            error: false
@@ -154,7 +154,7 @@ class Answers {
              
                  const like_id = likes.rows[0].id;
     
-                  update("Likes", "like_or_dislike", "id = $2", [ Number(body), like_id]).then(response => {
+                  make("update", "Likes", "like_or_dislike", "id = $2", [ Number(body), like_id]).then(response => {
                     if(response.rowCount > 0){
                         return res.status(201).json({
                             message: 'Success',
@@ -164,7 +164,7 @@ class Answers {
                   })
                }else{
             
-                insert("Likes", "answer_id, user_id, like_or_dislike", "$1, $2, $3", [answerId, id, Number(body)]).then(response => {
+                make("insert", "Likes", "answer_id, user_id, like_or_dislike", "$1, $2, $3", [answerId, id, Number(body)]).then(response => {
                     if(response.rowCount > 0){
                         return res.status(201).json({
                             message: 'Success',
