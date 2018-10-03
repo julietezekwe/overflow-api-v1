@@ -1,18 +1,19 @@
 import pool from "../db/dbConfig";
 
 const queries = {
-    findAll :  (table) => {
+    findAll :  (table, orderBy = "id ASC") => {
         return (
             pool.query({
-              text : `SELECT * FROM ${table}`
+              text : `SELECT * FROM ${table} ORDER BY ${orderBy}`
             })
         );
     },
 
-    findWithCondition :  (table, condition,  num="*" , orderBy = "id", order = "ASC" ) => {
+    findWithCondition :  (table, condition, orderBy = "id ASC", num="*") => {
+        console.log(condition)
         return (
             pool.query({
-              text : `SELECT ${num} FROM ${table} WHERE ${condition} ORDER BY ${orderBy} ${order}`
+              text : `SELECT ${num} FROM ${table} WHERE ${condition} ORDER BY ${orderBy}`
             })
         );
     },
@@ -34,6 +35,14 @@ const queries = {
             })
         )
       }
+    },
+    deleteOne :  (table, condition, values) => {
+        return (
+            pool.query({
+              text : `DELETE FROM ${table} WHERE ${condition}`,
+              values: values
+            })
+        );
     }
 }
 

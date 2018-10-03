@@ -1,14 +1,13 @@
 import questionModel from '../dummyModel/QuestionModel';
 import userModel from '../dummyModel/UserModel';
 import pool from "../db/dbConfig";
+import queries from "./queries";
 
+const { findAll, findWithCondition, make, deleteOne } = queries;
 
 class Questions {   
      static getAllQuestions(req, res){
-        const query = {
-            text : "SELECT * FROM Questions"
-        }
-        pool.query(query).then(questions => {
+        findAll("Questions").then(questions => {
             if(questions.rowCount > 0){
                 return res.status(201).json({
                     questionModel: questions.rows,
@@ -27,11 +26,9 @@ class Questions {
     static getQuestion(req, res){
        const { questionId } = req.params;
        let answers;
-        const query = {text: "SELECT * FROM Questions WHERE id = $1", values: [questionId] }
-        pool.query(query).then(question => {
+        findWithCondition("Questions", `id = ${questionId}`).then(question => {
             if(question.rowCount > 0){
-                pool.query({ text: "SELECT * FROM Answers WHERE question_id = $1", values: [questionId]})
-                .then(answers => {
+                 findWithCondition("Answers", `question_id = ${questionId}`).then(answers => {
                     answers.rowCount > 0 ? answers = answers.rows : answers = [];
                     return res.status(201).json({
                        questionDetail: question.rows[0], answers, message: 'Success',
@@ -42,21 +39,10 @@ class Questions {
                   });
             }    
         })
-  
-            
-        
-
-
-
-
     }
     static getUserQuestion(req, res){
         const { userId } = req.params;
-         const query = {
-             text: "SELECT * FROM Questions WHERE user_id = $1",
-             values: [userId]
-         }
-         pool.query(query).then(questions => {
+         findWithCondition("Questions", `user_id = ${userId}`).then(questions => {
              if(questions.rowCount > 0){
                 return res.status(201).json({
                     questions: questions.rows,
@@ -82,12 +68,7 @@ class Questions {
     static createQuestion(req, res) {
         const {id, email } = req.authData;
         const { title, body } = req.body;
-        const query = {
-            text : "INSERT INTO Questions(title, question, user_id) VALUES($1, $2, $3)",
-            values: [title, body, id]
-        }
-        pool.query(query).then(console.log);
-            
+      make("insert", "Questions", "title, question, user_id", "$1, $2, $3", [title, body, id])
             return res.status(201).json({
                 message: 'succefully created a question',
                error: false
@@ -97,11 +78,9 @@ class Questions {
         const {questionId } = req.params;
         const {id, email } = req.authData;
         const { title, body } = req.body;
-        const query = {
-            text : "UPDATE Questions SET title = $1, question = $2 WHERE id = $3 AND user_id = $4",
-            values: [title, body, questionId, id]
-        }
-        pool.query(query).then(response => {
+  
+        make("update", "Questions", "title = $1, question = $2", "id = $3 AND user_id = $4", [title, body, questionId, id])
+        .then(response => {
             if(response.rowCount > 0){
                 return res.status(201).json({
                     message: 'succefully updated a question',
@@ -124,13 +103,7 @@ class Questions {
         const { id } = req.authData;
         ;
          let questionDetail;
-
-         const query = {
-             text: "DELETE FROM Questions WHERE id = $1 AND user_id = $2",
-             values: [questionId, id]
-         };
-
-         pool.query(query).then(response => {
+         deleteOne("Questions", "id = $1 AND user_id = $2", [questionId, id]).then(response => {
              if(response.rowCount > 0){
                 return res.status(201).json({
                      message: 'Deleted successfully'
@@ -148,10 +121,8 @@ class Questions {
      }
 
      static getQuestionsWithMostAnswers(req, res){
-         const query = {
-             text: "SELECT * FROM Questions ORDER BY answers DESC"
-         }
-         pool.query(query).then(questions => {
+        
+         findAll("Questions", "answers DESC").then(questions => {
              return res.status(201).json({
                  quesions : questions.rows
              })
@@ -171,8 +142,10 @@ class Questions {
             text: "SELECT * FROM Questions WHERE question ILIKE $1 ORDER BY answers DESC",
             values: [`%${searchString}%`]
         }
-       
-        pool.query(query).then(questions => {
+       console.log(`%${searchString}%`)
+        pool.query(query)
+        // findWithCondition("Questions", `question ILIKE %${searchString}%`, "answers DESC" )
+        .then(questions => {
             
             return res.status(201).json({
                 quesions : questions.rows
