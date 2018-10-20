@@ -34,11 +34,11 @@ router
     .get('/auth/:userId', idChecker, getUser);
 
 // Qustion and answer endpoints
-// router.get('/questions', getAllQuestions);
-// router.get('/question/:questionId', idChecker, getQuestion);
-// router.get('/question/:userId/questions', authenticate, idChecker, getUserQuestion);
-// router.get('/question/:questionId/answers', idChecker, getAnswer);
-// router.post('/question', createQuestionValidator, authenticate, createQuestion);
+router.get('/questions', getAllQuestions);
+router.get('/question/:questionId', idChecker, getQuestion);
+router.get('/question/:userId/questions', authenticate, idChecker, getUserQuestion);
+router.get('/question/:questionId/answers', idChecker, getAnswer);
+router.post('/question', createQuestionValidator, authenticate, createQuestion);
 router.put('/question/:questionId', idChecker, createQuestionValidator, authenticate, updateQuestion);
 router.post('/question/:questionId/answer', idChecker, createAnswerValidator, authenticate, createAnswer);
 router.put('/question/:questionId/answers/:answerId', idChecker, createAnswerValidator, authenticate, updateAnswer);
